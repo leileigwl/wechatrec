@@ -23,37 +23,74 @@ def save_article_data(article_data):
     """Save article data to MongoDB"""
     db = get_db_connection()
     
-    # Add timestamp for when we received the data
-    article_data['saved_at'] = datetime.now().isoformat()
-    
-    # For each article in the data list
-    for article in article_data.get('data', []):
-        # Convert publication time to datetime
-        if 'pub_time' in article:
-            try:
-                pub_time = int(article['pub_time'])
-                article['pub_time_iso'] = datetime.fromtimestamp(pub_time).isoformat()
-            except (ValueError, TypeError):
-                pass
+    # Check if article_data is a list or dict
+    if isinstance(article_data, list):
+        # Handle list of articles
+        timestamp = datetime.now().isoformat()
+        
+        # Process each article in the list
+        for article in article_data:
+            if isinstance(article, dict):
+                # Add timestamp for when we received the data
+                article['saved_at'] = timestamp
                 
-        # Generate a unique ID based on URL or biz+mid if available
-        if 'url' in article:
-            article['_id'] = article.get('biz', '') + '_' + article.get('pub_time', '') + '_' + article.get('title', '')[:50]
-    
-    # Insert the original request data as a record
-    try:
-        db[ARTICLES_COLLECTION].insert_one(article_data)
+                # Convert publication time to datetime
+                if 'pub_time' in article:
+                    try:
+                        pub_time = int(article['pub_time'])
+                        article['pub_time_iso'] = datetime.fromtimestamp(pub_time).isoformat()
+                    except (ValueError, TypeError):
+                        pass
+                        
+                # Generate a unique ID based on URL or biz+mid if available
+                if 'url' in article:
+                    article['_id'] = article.get('biz', '') + '_' + article.get('pub_time', '') + '_' + article.get('title', '')[:50]
+            
+                # Insert the article data
+                try:
+                    db[ARTICLES_COLLECTION].insert_one(article)
+                except pymongo.errors.DuplicateKeyError:
+                    # Update existing record
+                    db[ARTICLES_COLLECTION].update_one(
+                        {'_id': article.get('_id')},
+                        {'$set': article}
+                    )
+                except Exception as e:
+                    print(f"Error saving article to MongoDB: {e}")
         return True
-    except pymongo.errors.DuplicateKeyError:
-        # Update existing record
-        db[ARTICLES_COLLECTION].update_one(
-            {'_id': article_data.get('_id')},
-            {'$set': article_data}
-        )
-        return True
-    except Exception as e:
-        print(f"Error saving to MongoDB: {e}")
-        return False
+    else:
+        # Original code for handling dictionary
+        # Add timestamp for when we received the data
+        article_data['saved_at'] = datetime.now().isoformat()
+        
+        # For each article in the data list
+        for article in article_data.get('data', []):
+            # Convert publication time to datetime
+            if 'pub_time' in article:
+                try:
+                    pub_time = int(article['pub_time'])
+                    article['pub_time_iso'] = datetime.fromtimestamp(pub_time).isoformat()
+                except (ValueError, TypeError):
+                    pass
+                    
+            # Generate a unique ID based on URL or biz+mid if available
+            if 'url' in article:
+                article['_id'] = article.get('biz', '') + '_' + article.get('pub_time', '') + '_' + article.get('title', '')[:50]
+        
+        # Insert the original request data as a record
+        try:
+            db[ARTICLES_COLLECTION].insert_one(article_data)
+            return True
+        except pymongo.errors.DuplicateKeyError:
+            # Update existing record
+            db[ARTICLES_COLLECTION].update_one(
+                {'_id': article_data.get('_id')},
+                {'$set': article_data}
+            )
+            return True
+        except Exception as e:
+            print(f"Error saving to MongoDB: {e}")
+            return False
 
 # Save log data to MongoDB
 def save_log(log_data):

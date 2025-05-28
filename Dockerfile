@@ -31,7 +31,7 @@ RUN mkdir -p /artlist/html/images /artlist/json /artlist/logs
 ENV PYTHONUNBUFFERED=1
 
 # Expose port
-EXPOSE 29212
+EXPOSE 8000
 
 # Command to run the application
 CMD ["uvicorn", "fastapiServer:app", "--host", "0.0.0.0", "--port", "8000"] 
