@@ -5,11 +5,19 @@ from datetime import datetime
 import json
 import traceback
 from bs4 import BeautifulSoup
+from bson import ObjectId  # Import ObjectId from bson
 
 # 导入你的工具函数
 from WxartDownloader import DownArtList, SaveFile, get_current_time_string
 # 导入MongoDB工具函数
 from mongo_utils import save_article_data, save_log, get_articles, get_logs
+
+# Create a custom JSON encoder for MongoDB ObjectId
+class MongoJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, ObjectId):
+            return str(obj)  # Convert ObjectId to string
+        return super().default(obj)
 
 # 配置目录
 SaveJsonDir = "/artlist/json"  # 修改为 Linux 路径
@@ -45,9 +53,9 @@ def log_request(request: Request, json_data: dict):
     log_filename = datetime.now().strftime("%Y-%m-%d") + ".log"
     log_path = os.path.join(LogsDir, log_filename)
     
-    # 写入日志
+    # 写入日志 - 使用自定义encoder
     with open(log_path, "a", encoding="utf-8") as log_file:
-        log_file.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
+        log_file.write(json.dumps(log_entry, ensure_ascii=False, cls=MongoJSONEncoder) + "\n")
 
 # 主接口，保存文章列表
 @app.post("/artlist/")
@@ -65,7 +73,7 @@ async def artlist(request: Request):
         # 保存发过来的json数据到文件系统
         current_time = get_current_time_string() + ".txt"
         savepath = os.path.join(SaveJsonDir, current_time)
-        SaveFile(savepath, json.dumps(json_data, ensure_ascii=False, indent=4))
+        SaveFile(savepath, json.dumps(json_data, ensure_ascii=False, indent=4, cls=MongoJSONEncoder))
         
         # 下载文章（如果启用）
         if downArtFlag:
@@ -124,7 +132,8 @@ async def view_logs(date: str = None, limit: int = 100):
             if limit > 0:
                 logs = logs[:limit]
         
-        return JSONResponse(content=logs)
+        # 使用自定义encoder处理ObjectId
+        return JSONResponse(content=json.loads(json.dumps(logs, cls=MongoJSONEncoder)))
     
     except Exception as e:
         print(traceback.format_exc())
@@ -149,7 +158,8 @@ async def get_article_list(limit: int = 100, skip: int = 0, biz: str = None):
             query = {"data.biz": biz}
             
         articles = get_articles(limit=limit, skip=skip, query=query)
-        return JSONResponse(content=articles)
+        # 使用自定义encoder处理ObjectId
+        return JSONResponse(content=json.loads(json.dumps(articles, cls=MongoJSONEncoder)))
     except Exception as e:
         print(traceback.format_exc())
         return JSONResponse(
