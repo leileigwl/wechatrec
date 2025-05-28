@@ -77,7 +77,14 @@ async def artlist(request: Request):
         
         # 下载文章（如果启用）
         if downArtFlag:
-            DownArtList(json_data)
+            # 确保传递正确格式的数据给DownArtList
+            if isinstance(json_data, list):
+                # 如果传入的是列表格式，创建一个包含data字段的字典
+                formatted_data = {"data": json_data}
+                DownArtList(formatted_data)
+            else:
+                # 如果已经是字典格式，直接传入
+                DownArtList(json_data)
         
         return "success"
     except Exception as e:
