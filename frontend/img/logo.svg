@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="80" viewBox="0 0 240 80">
+  <style>
+    .text { font-family: Arial, sans-serif; font-weight: bold; }
+    .wechat { fill: #07C160; }
+    .search { fill: #4285F4; }
+  </style>
+  <g transform="translate(10, 50)">
+    <!-- WeChat Icon -->
+    <path class="wechat" d="M0,0 C0,-15 12,-27 27,-27 C42,-27 54,-15 54,0 C54,15 42,27 27,27 C12,27 0,15 0,0 Z M16,-8 C13,-8 11,-6 11,-3 C11,0 13,2 16,2 C19,2 21,0 21,-3 C21,-6 19,-8 16,-8 Z M38,-8 C35,-8 33,-6 33,-3 C33,0 35,2 38,2 C41,2 43,0 43,-3 C43,-6 41,-8 38,-8 Z" />
+    
+    <!-- Search Icon -->
+    <g transform="translate(180, 0)">
+      <circle class="search" cx="0" cy="0" r="15" fill="none" stroke-width="5" />
+      <line class="search" x1="10" y1="10" x2="20" y2="20" stroke-width="5" stroke-linecap="round" />
+    </g>
+    
+    <!-- Text -->
+    <text x="60" y="8" class="text wechat" font-size="24">WeChat</text>
+    <text x="60" y="28" class="text search" font-size="24">Search</text>
+  </g>
+</svg> 
