@@ -1,6 +1,6 @@
 # WeChat Article Search Backend
 
-这是微信文章搜索系统的后端部分，使用FastAPI和Elasticsearch实现。
+这是新能源知识库系统的后端部分，使用FastAPI和Elasticsearch实现。
 
 ## 功能特点
 
@@ -29,7 +29,7 @@ backend/
 POST /artlist/
 ```
 
-保存微信文章到Elasticsearch。
+保存新能源文章到Elasticsearch。
 
 请求体示例：
 
@@ -81,7 +81,7 @@ GET /logs/?start={start_time}&end={end_time}&page={page}&size={size}
 
 ### wechat_articles
 
-存储微信文章的索引，包含以下字段：
+存储新能源文章的索引，包含以下字段：
 
 - `url`: 文章链接
 - `title`: 文章标题
