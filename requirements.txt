@@ -1,0 +1,9 @@
+ fastapi==0.100.0
+uvicorn==0.22.0
+elasticsearch==7.17.0
+sqlalchemy==2.0.18
+pymysql==1.1.0
+python-dotenv==1.0.0
+pydantic==2.0.2
+cryptography==41.0.1
+requests==2.31.0
