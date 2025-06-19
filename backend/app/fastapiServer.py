@@ -91,12 +91,39 @@ async def startup_event():
     initialize_indices()
     logger.info("Elasticsearch索引初始化完成")
 
-# 健康检查端点
-@app.get("/health")
-async def health_check():
-    return {"status": "ok", "timestamp": datetime.now().isoformat()}
 
-# 保存文章数据
+# 添加单篇文章，单篇推送
+@app.post("/article/")
+async def add_article(request: Request):
+    """添加单篇文章"""
+    try:
+        article_data = await request.json()
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=400, detail="无效的JSON格式")
+
+    # 记录请求日志
+    log_data = {
+        "timestamp": datetime.now().isoformat(),
+        "method": request.method,
+        "path": request.url.path,
+        "client": request.client.host if request.client else "unknown",
+        "data": article_data
+    }
+    save_log(log_data)
+
+    # 添加文章
+    result = add_single_article(article_data)
+
+    if not result.get("success", False):
+        return JSONResponse(
+            status_code=400,
+            content=result
+        )
+
+    return result
+
+
+# 保存文章数据，按照jsonlog来保存
 @app.post("/artlist/")
 async def save_articles(request: Request):
     # 获取请求数据
@@ -151,17 +178,6 @@ async def search(
     
     return results
 
-# 获取日志
-@app.get("/logs/")
-async def logs(
-    start: Optional[str] = Query(None, description="Start time (ISO format)"),
-    end: Optional[str] = Query(None, description="End time (ISO format)"),
-    page: int = Query(1, ge=1, description="Page number"),
-    size: int = Query(50, ge=1, le=100, description="Results per page")
-):
-    return get_logs(start, end, page, size)
-
-# 数据管理端点
 
 # 删除单篇文章
 @app.delete("/article/{article_id}")
@@ -191,35 +207,6 @@ async def remove_all_articles():
     
     return result
 
-# 添加单篇文章
-@app.post("/article/")
-async def add_article(request: Request):
-    """添加单篇文章"""
-    try:
-        article_data = await request.json()
-    except json.JSONDecodeError:
-        raise HTTPException(status_code=400, detail="无效的JSON格式")
-    
-    # 记录请求日志
-    log_data = {
-        "timestamp": datetime.now().isoformat(),
-        "method": request.method,
-        "path": request.url.path,
-        "client": request.client.host if request.client else "unknown",
-        "data": article_data
-    }
-    save_log(log_data)
-    
-    # 添加文章
-    result = add_single_article(article_data)
-    
-    if not result.get("success", False):
-        return JSONResponse(
-            status_code=400,
-            content=result
-        )
-    
-    return result
 
 # 获取所有文章
 @app.get("/articles/")
