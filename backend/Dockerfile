@@ -2,12 +2,6 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
-RUN echo "deb https://mirrors.tuna.tsinghua.edu.cn/debian bookworm main contrib non-free\n\
-deb https://mirrors.tuna.tsinghua.edu.cn/debian bookworm-updates main contrib non-free\n\
-deb https://mirrors.tuna.tsinghua.edu.cn/debian-security bookworm-security main contrib non-free" \
-> /etc/apt/sources.list
-
-
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
@@ -28,7 +22,7 @@ RUN mkdir -p /artlist/html/images /artlist/json /artlist/logs
 ENV PYTHONUNBUFFERED=1
 
 # Expose port
-EXPOSE 8000
+EXPOSE 29212
 
 # Command to run the application
 CMD ["uvicorn", "fastapiServer:app", "--host", "0.0.0.0", "--port", "8000"] 

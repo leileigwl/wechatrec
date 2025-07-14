@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新能源知识库</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="shortcut icon" href="img/favicon.svg" type="image/svg+xml">
+    <style>
+        .admin-link {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            color: #5f6368;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+        }
+        .admin-link:hover {
+            color: #1a73e8;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 管理链接 -->
+        <a href="articles.html" class="admin-link">
+            <span class="material-icons" style="font-size: 16px;">settings</span>
+            文章管理
+        </a>
+        
+        <!-- 主页搜索区域 -->
+        <div class="search-container" id="home-search">
+            <div class="logo">
+                <h1>新能源知识库</h1>
+            </div>
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="搜索新能源文章...">
+                <button id="search-button">
+                    <span class="material-icons">search</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 结果页搜索区域 -->
+        <div class="results-search-container" id="results-search" style="display: none;">
+            <div class="results-header">
+                <div class="results-logo">
+                    <h2>新能源知识库</h2>
+                </div>
+                <div class="results-search-box">
+                    <input type="text" id="results-search-input" placeholder="搜索新能源文章...">
+                    <button id="results-search-button">
+                        <span class="material-icons">search</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 公众号分类筛选区域 -->
+        <div class="bizname-filter" id="bizname-filter" style="display: none;">
+            <h3>按公众号筛选</h3>
+            <div id="bizname-list" class="bizname-list"></div>
+        </div>
+
+        <!-- 搜索结果区域 -->
+        <div class="search-results" id="search-results" style="display: none;">
+            <div class="result-stats" id="result-stats"></div>
+            <div class="result-items" id="result-items"></div>
+            
+            <!-- 分页导航 -->
+            <div class="pagination" id="pagination"></div>
+        </div>
+
+        <!-- 加载动画 -->
+        <div class="loader" id="loader" style="display: none;">
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <!-- 结果项模板 -->
+    <template id="result-item-template">
+        <div class="result-item">
+            <div class="result-header">
+                <div class="result-source">
+                    <strong class="bizname-label">公众号：</strong><span class="bizname"></span>
+                </div>
+                <div class="result-date">
+                    <span class="pub-date"></span>
+                </div>
+            </div>
+            <h3 class="result-title"><a href="#" target="_blank"></a></h3>
+            <div class="result-snippet"></div>
+        </div>
+    </template>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 新能源知识库 - 无商业用途，仅供学习和研究</p>
+        </div>
+    </footer>
+
+    <script src="js/search.js"></script>
+</body>
+</html> 
